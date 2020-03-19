@@ -8,7 +8,7 @@ const proce = ora('正在下载模板...')
 proce.start()
 proce.fail() // 失败调用
 proce.succeed() // 成功调用
-program
+program 
   .version(require('./package').version, '-v, --version')
   .usage('[options] [dir]')
   .option('-e, --ejs')
