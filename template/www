@@ -1,0 +1,27 @@
+const Http = require('http')
+const app = require('../app')
+const logger = require('../utils/logger')
+const os = require('os')
+const server = Http.createServer(app.callback())
+server.listen(8070)
+server.on('listening', onListening)
+
+/* 获取公网IP */
+/*const getPublicIP = async () => {
+    const publicIP = require('public-ip')
+    return await publicIP.v4()
+}*/
+/* 获取内网IP */
+/* const getInnerIP = () => {
+    const networkInterfaces = os.networkInterfaces()
+    return Object.values(networkInterfaces)[0]
+        .find(val => val.family === 'IPv4' && val.address && val.address !== '127.0.0.1')
+}*/
+
+/* 服务监听 */
+function onListening() {
+  const Address = server.address()
+  const Port = Address.port
+  logger.write(`Your application is running here: http://127.0.0.1:${Port}`)
+  console.log(` Your application is running here: http://127.0.0.1:${Port}`)
+}

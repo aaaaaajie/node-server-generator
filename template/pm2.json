@@ -1,0 +1,18 @@
+{
+  "apps": [
+    {
+      "name": "blog",
+      "script": "./bin/www",
+      "args": ["-p", "3001"],
+      "node_args": "--harmony",
+      "merge_logs": true,
+      "cwd": "./",
+      "log_file": "./log/combined.outerr.log",
+      "out_file": "./log/out.log",
+      "error_file": "./log/err.log",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

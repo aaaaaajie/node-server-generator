@@ -1,0 +1,15 @@
+const Koa = require('koa')
+const Static = require('koa-static')
+const Path = require('path')
+const KoaBody = require('koa-body')
+const Cors = require('@koa/cors')
+const OnError = require('koa-onerror')
+const Router = require('./routes/router')
+const app = new Koa()
+
+app.use(Static(Path.join(__dirname, '/public')))
+// app.use(Static(Path.join(__dirname, '/upload')))
+app.use(KoaBody())
+app.use(Cors())
+app.use(Router.routes())
+module.exports = app
