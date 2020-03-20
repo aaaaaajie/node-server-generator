@@ -2,9 +2,9 @@
   "name": "node-koa2-creater",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./bin/koa2",
   "bin": {
-    "koa2": "./index.js"
+    "koa2": "./bin/koa2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,6 +15,7 @@
   "author": "ipenman",
   "license": "ISC",
   "dependencies": {
+    "await-to-js": "^2.1.1",
     "chalk": "^3.0.0",
     "commander": "^5.0.0",
     "inquirer": "^7.1.0",

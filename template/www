@@ -3,7 +3,7 @@ const app = require('../app')
 const logger = require('../utils/logger')
 const os = require('os')
 const server = Http.createServer(app.callback())
-server.listen(8070)
+server.listen(8080)
 server.on('listening', onListening)
 
 /* 获取公网IP */
