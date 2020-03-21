@@ -1,6 +1,6 @@
 const fs = require('fs')
 const chalk = require('chalk')
-const readline = require('readline')
+const inquirer = require('inquirer')
 
 exports.log = async (msg = '', type) => {
   switch (type) {
@@ -16,6 +16,12 @@ exports.log = async (msg = '', type) => {
       break
     case 'note':
       console.log(chalk.gray(msg))
+      break
+    case 'sign':
+      console.log(chalk.cyan(msg))
+      break
+    case 'keyword':
+      console.log(chalk.magenta(msg))
       break
     default:
       console.log(msg)
@@ -52,15 +58,26 @@ exports.copyFile = (src, dest) => {
 }
 
 /* cmd确认 */
-exports.confirm = msg => {
-  return new Promise(resolve => {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    })
-    rl.question(msg, input => {
-      rl.close()
-      resolve(/^y|yes|ok|true$/i.test(input))
-    })
-  })
+exports.confirm = (name, msg) => {
+  const promptList = [
+    {
+      type: 'confirm',
+      message: msg,
+      name: name
+    }
+  ]
+  return inquirer.prompt(promptList)
+}
+
+/* cmd选择 */
+exports.choices = (name, msg, choices) => {
+  const promptList = [
+    {
+      type: 'list',
+      name: name,
+      message: msg,
+      choices: choices
+    }
+  ]
+  return inquirer.prompt(promptList)
 }

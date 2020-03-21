@@ -1,0 +1,158 @@
+#!/usr/bin/env node
+const { Command } = require('commander')
+const ora = require('ora')
+const atj = require('await-to-js')
+const path = require('path')
+const chalk = require('chalk')
+const utils = require('../src/utils')
+const templateConfig = require('../src/template')
+const program = new Command()
+
+;(() => {
+  program.version(require('../package').version, '-v, --version').usage('init <project-name>')
+  program
+    .command('init <project-name>')
+    .description('generate a new project')
+    .action(async projectName => {
+      const [err] = await atj.to(main(projectName))
+      err ? utils.log(err, 'error') : utils.log(destPath + '/bin/www', 'note')
+    })
+  program.on('--help', () => {
+    utils.log()
+    utils.log('  Example:')
+    utils.log()
+    utils.log('     # create a new project', 'note')
+    utils.log('     $ koa2 init my-project')
+    utils.log()
+  })
+  program.parse(process.argv)
+})()
+/**
+ * 入口函数
+ */
+async function main(projectName) {
+  let err,
+    result,
+    destPath = program.args.pop() || '.'
+  // 检查目录是否为空
+  ;[err, result] = await atj.to(utils.emptyDir(destPath))
+  if (err && 'ENOENT' !== err.code) utils.log(err, 'error')
+  if (result) {
+    ;[err, result] = await atj.to(utils.confirm('cover', '当前目录不是空的, 是否继续? [y/N] '))
+    if (err || !result['cover']) {
+      console.error('aborting')
+      process.exit()
+    } else {
+      utils.log()
+      await init(destPath, projectName)
+    }
+  } else await init(destPath, projectName)
+}
+
+/**
+ * @description 初始化目录模板文件
+ * @param {*} destPath 目标路径
+ * @param {*} projectName 项目名称
+ */
+async function init(destPath, projectName) {
+  let [err, answer] = await atj.to(
+    utils.choices('template', '请选择开发技术栈', [
+      { name: 'Express', value: 'express' },
+      { name: 'Koa2', value: 'koa2' },
+      { name: 'Http', value: 'http' }
+    ])
+  )
+  !templateConfig[answer['template']] && utils.log(`${answer['template']} 模板不存在 或还没有实现，待更新...`, 'error')
+  const [www, config, app, index, router, errorList, token, logger, getReq, upload, load, pm2] = [
+    path.join(__dirname, '..', templateConfig[answer['template']]['www']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['config']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['app']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['index']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['router']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['errorlist']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['token']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['logger']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['getreq']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['upload']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['load']),
+    path.join(__dirname, '..', templateConfig[answer['template']]['pm2'])
+  ]
+  const pkg = templateConfig[answer['template']]['pkg']
+  pkg.name = projectName
+  console.log()
+  ora(chalk.blue('开始初始化...')).start()
+  console.log()
+  console.log()
+  err && process.exit(1)
+  await createDir(destPath)
+  await createFile(destPath, { www, config, app, index, router, errorList, token, logger, getReq, upload, load, pm2, pkg }, projectName)
+  ora(chalk.green('初始化完毕!')).succeed() // 成功调用
+  utils.log()
+  utils.log('====跳转目录====', 'note')
+  utils.log(`cd ${projectName}`, 'keyword')
+  utils.log()
+  utils.log('====安装环境====', 'note')
+  utils.log(`npm install`, 'keyword')
+  utils.log()
+  utils.log('====开发环境====', 'note')
+  utils.log('npm start 或 npm run dev', 'keyword')
+  utils.log()
+  utils.log()
+  utils.log(`✨✨✨ ${projectName}项目创建成功 ✨✨✨`, 'ok')
+  process.exit()
+}
+
+/**
+ * @description 创建目录
+ * @param {*} destPath 目标路径
+ */
+async function createDir(destPath) {
+  ora(chalk.blue('正在创建目录...')).start()
+  console.log()
+  console.log()
+  await utils.mkdir(destPath)
+  await utils.mkdir(destPath + '/bin')
+  await utils.mkdir(destPath + '/public')
+  await utils.mkdir(destPath + '/public/javascripts')
+  await utils.mkdir(destPath + '/public/images')
+  await utils.mkdir(destPath + '/public/dist')
+  await utils.mkdir(destPath + '/DAL')
+  await utils.mkdir(destPath + '/DB')
+  await utils.mkdir(destPath + '/config')
+  await utils.mkdir(destPath + '/service')
+  await utils.mkdir(destPath + '/utils')
+  await utils.mkdir(destPath + '/routes')
+  ora(chalk.green('创建目录成功!')).succeed() // 成功调用
+  console.log()
+}
+
+/**
+ * @description 创建模板文件
+ * @param {www, config, app, router, errorList, token, getReq, upload, pm2} 源文件路径集合
+ * @param {*} projectName 项目名
+ */
+async function createFile(destPath, { www, config, app, index, router, errorList, token, logger, getReq, upload, load, pm2, pkg }, projectName) {
+  ora(chalk.blue('正在创建模板文件...')).start()
+  console.log()
+  console.log()
+  await executeFile(destPath, '/bin/www', utils.copyFile(www, destPath + '/bin/www'))
+  await executeFile(destPath, '/config/index.js', utils.copyFile(config, destPath + '/config/index.js'))
+  await executeFile(destPath, '/app.js', utils.copyFile(app, destPath + '/app.js'))
+  await executeFile(destPath, '/service/index.js', utils.copyFile(index, destPath + '/service/index.js'))
+  await executeFile(destPath, '/routes/index.js', utils.copyFile(router, destPath + '/routes/index.js'))
+  await executeFile(destPath, '/utils/errorlist.js', utils.copyFile(errorList, destPath + '/utils/errorlist.js'))
+  await executeFile(destPath, '/utils/token.js', utils.copyFile(token, destPath + '/utils/token.js'))
+  await executeFile(destPath, '/utils/logger.js', utils.copyFile(logger, destPath + '/utils/logger.js'))
+  await executeFile(destPath, '/utils/getReq.js', utils.copyFile(getReq, destPath + '/utils/getReq.js'))
+  await executeFile(destPath, '/utils/upload.js', utils.copyFile(upload, destPath + '/utils/upload.js'))
+  await executeFile(destPath, '/utils/load.js', utils.copyFile(load, destPath + '/utils/load.js'))
+  await executeFile(destPath, '/pm2.json', utils.copyFile(pm2, destPath + '/pm2.json'))
+  await executeFile(destPath, '/package.json', utils.writeFile(JSON.stringify(pkg, null, 2), destPath + '/package.json'))
+  ora(chalk.green('模板文件创建完毕!')).succeed()
+  console.log()
+}
+async function executeFile(destPath, fileName, fn) {
+  ;[err] = await atj.to(fn)
+  err ? utils.log(err, 'error') : utils.log(destPath + fileName, 'sign')
+  console.log()
+}

@@ -10,5 +10,5 @@ const ReqData = async (ctx, next) => {
   await next()
 }
 
-router.get('/', Loader.index.sayHi)
+router.get('/', Loader.api.index.sayHi)
 module.exports = router

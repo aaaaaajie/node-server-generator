@@ -2,9 +2,9 @@
   "name": "node-koa2-creater",
   "version": "1.0.0",
   "description": "",
-  "main": "./bin/koa2",
+  "main": "./bin/server",
   "bin": {
-    "koa2": "./bin/koa2"
+    "server": "./bin/server"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

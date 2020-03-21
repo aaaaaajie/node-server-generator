@@ -1,0 +1,44 @@
+{
+  "koa2": {
+    "www": "template/koa2/www",
+    "config": "template/koa2/config.js",
+    "app": "template/koa2/app.js",
+    "index": "template/koa2/index.js",
+    "router": "template/koa2/router.js",
+    "errorlist": "template/koa2/errorlist.js",
+    "token": "template/koa2/token.js",
+    "logger": "template/koa2/logger.js",
+    "getreq": "template/koa2/getReq.js",
+    "upload": "template/koa2/upload.js",
+    "load": "template/koa2/load.js",
+    "pm2": "template/koa2/pm2.json",
+    "pkg": {
+      "name": "",
+      "version": "1.0.0",
+      "private": true,
+      "scripts": {
+        "dev": "nodemon ./bin/www",
+        "start": "npm run dev",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "author": "ipenman",
+        "license": "ISC"
+      },
+      "dependencies": {
+        "@koa/cors": "^3.0.0",
+        "@koa/multer": "^2.0.2",
+        "jsonwebtoken": "^8.5.1",
+        "koa": "^2.11.0",
+        "koa-body": "^4.1.1",
+        "koa-multer": "^1.0.2",
+        "koa-onerror": "^4.1.0",
+        "koa-router": "^7.4.0",
+        "koa-static": "^5.0.0",
+        "moment": "^2.24.0",
+        "node-dbs": "^1.0.2",
+        "nodemon": "^1.19.4",
+        "public-ip": "^3.2.0",
+        "tracer": "^1.0.2"
+      }
+    }
+  }
+}
