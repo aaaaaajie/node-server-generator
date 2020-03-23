@@ -1,5 +1,5 @@
 {
-  "name": "node-koa2-creater",
+  "name": "node-server-generator",
   "version": "1.0.0",
   "description": "",
   "main": "./bin/server",
@@ -10,7 +10,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "koa2"
+    "express",
+    "http",
+    "koa2",
+    "nodejs",
+    "server"
   ],
   "author": "ipenman",
   "license": "ISC",
